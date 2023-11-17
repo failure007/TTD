@@ -28,6 +28,3 @@ workflows:
  build_and_deploy:
  jobs:
  - build_and_push:
- filters:
- branches:
- only: main
