@@ -1,3 +1,5 @@
+from sparse_recommender import SparseMatrix  # Ensure this import is correct
+
 class SparseMatrix:
 
     def __init__(self):
