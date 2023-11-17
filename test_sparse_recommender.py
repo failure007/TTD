@@ -1,44 +1,48 @@
-from sparse_recommender import SparseMatrix  # Ensure this import is correct
+from sparse_recommender import SparseMatrix
 
-class SparseMatrix:
+def test_set_value():
+    matrix = SparseMatrix(3, 4)
+    
+    matrix.set(0, 0, 1)
+    
+    assert matrix.get(0, 0) == 1
 
-    def __init__(self):
-        self.data = {}  # Initialize an empty data dictionary to store sparse matrix values
+def test_get_value():
+    matrix = SparseMatrix(3, 4)
+    
+    matrix.set(1, 1, 2)
+    
+    assert matrix.get(1, 1) == 2
 
-    def set(self, row, col, value):
-        self.data[(row, col)] = value  # Set the value at the given (row, col) position in the dictionary
+def test_recommend():
+    matrix = SparseMatrix(3, 4)
+    matrix.set(0, 0, 1)
+    matrix.set(1, 1, 2)
+    
+    vector = [1, 2, 0, 0]
+    
+    recommendations = matrix.recommend(vector)
+    
+    assert recommendations == [1, 4, 0]
 
-    def get(self, row, col):
-        return self.data.get((row, col), 0)  # Retrieve the value at the given (row, col) position or return 0 if not found
+def test_add_movie():
+    matrix1 = SparseMatrix(3, 4)
+    matrix1.set(0, 0, 1)
+    
+    matrix2 = SparseMatrix(3, 4)
+    matrix2.set(1, 1, 2)
+    
+    result_matrix = matrix1.add_movie(matrix2)
+    
+    assert result_matrix.get(0, 0) == 1
+    assert result_matrix.get(1, 1) == 2
 
-    def recommend(self, vector):
-        result = []
-        for row in range(len(vector)):
-            value = 0
-            for col in range(len(vector)):
-                value += vector[col] * self.get(col, row)  # Calculate the recommendation value
-            result.append(value)
-        return result
 
-    def add_movie(self, other_matrix):
-        result = SparseMatrix()
-        # Copy data from the original matrix
-        for (row, col), value in self.data.items():
-            result.set(row, col, value)
-        # Add values from other_matrix
-        for (row, col), value in other_matrix.data.items():
-            result.set(row, col, result.get(row, col) + value)
-        return result
-
-    def to_dense(self):
-        max_row, max_col = -1, -1
-        for row, col in self.data.keys():
-            max_row = max(max_row, row)
-            max_col = max(max_col, col)
-
-        result = [[0] * (max_col + 1) for _ in range(max_row + 1)]
-
-        for (row, col), value in self.data.items():
-            result[row][col] = value  # Populate the dense matrix with values from the sparse matrix
-
-        return result
+def test_to_dense():
+    matrix = SparseMatrix(2, 3)
+    matrix.set(0, 0, 1)
+    matrix.set(1, 1, 2)
+    
+    dense_matrix = matrix.to_dense()
+    
+    assert dense_matrix == [[1, 0, 0], [0, 2, 0]]
